@@ -11,7 +11,7 @@ class MovieController
     }
     public function handle_request($method, $id)
     {
-        if (strlen($id) > 0 && $id !== null) {
+        if ($id !== null && strlen($id) > 0) {
             // echo "getting id";
             // echo "<br>" . strlen($id) . "<br>";
             // echo "getting id";
@@ -32,10 +32,9 @@ class MovieController
             $movie = json_decode($movie, true);
             $movie = (array) $movie;
             $response = $this->moviegateway->create($movie);
-            if($response){
+            if ($response) {
                 echo json_encode(array("success" => true, "message" => "movie created"));
-            }
-            else    
+            } else
                 echo json_encode(array("success" => false, "message" => "movie not created"));
 
         }
@@ -43,7 +42,36 @@ class MovieController
     }
     public function processResourceRequest($method, $id)
     {
+        switch ($method) {
+            case 'GET': {
+                    $response = $this->moviegateway->show($id);
+                    echo json_encode($response);
+                    break;
+                }
+            case 'PUT': {
+                    $movie = file_get_contents('php://input');
+                    $movie = json_decode($movie, true);
+                    $movie = (array) $movie;
+                    $response = $this->moviegateway->update($movie, $id);
+                    if ($response) {
+                        echo json_encode(array("success" => true, "message" => "movie updated"));
+                    } else
+                        echo json_encode(array("success" => false, "message" => "movie not updated"));
 
+                    // echo json_encode($response);
+                    // break;
+                    break;
+                }
+            case 'DELETE': {
+                    $response = $this->moviegateway->delete($id);
+                    if ($response) {
+                        echo json_encode(array("success" => true, "message" => "movie deleted"));
+                    } else
+                        echo json_encode(array("success" => false, "message" => "movie not deleted"));
+
+                    break;
+                }
+        }
     }
 }
 
