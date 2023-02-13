@@ -47,16 +47,16 @@ $database = new Database();
 $urlParts = explode("/", $_SERVER['REQUEST_URI']);
 $id = $urlParts[3] ?? null;
 
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods:GET,POST,PUT,DELETE,OPTIONS");
+header("Access-Control-Allow-Headers:*");
 header('content_type:application/json;charset=UTF-8');
 
 if ($urlParts[2] === "movies") {
-    // echo "hello";
     $movieGateway = new MovieGateway($database);
-
     $moviecontroller = new MovieController($movieGateway);
-
     $moviecontroller->handle_request($_SERVER['REQUEST_METHOD'], $id);
-    // echo "hello";
 } else if ($urlParts[2] === "reviews") {
     $reviewGateway = new ReviewGateway($database);
     $reviewController = new ReviewController($reviewGateway);
