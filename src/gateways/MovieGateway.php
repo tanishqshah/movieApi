@@ -15,6 +15,7 @@ class MovieGateway
         $result = $this->connection->query($query);
         $data = array();
 
+
         while ($row = $result->fetch_assoc()) {
             $data[] = $row;
         }
@@ -23,13 +24,24 @@ class MovieGateway
     }
 
     public function show($id){
-        $query = "select * from movies where id=$id";
+        $moviequery = "select * from movies where id=$id";
         // $result=
-        $result = $this->connection->query($query);
-        $data = $result->fetch_assoc();
+        $movieresult = $this->connection->query($moviequery);
+        $movie = $movieresult->fetch_assoc();
         
-        // print_r($data);
+        $reviews = [];
+
+        $rquery = "select * from reviews where mid=$id";
+        $res = $this->connection->query($rquery);
+        while($row=$res->fetch_assoc()){
+            $reviews[]=$row;
+        }
+
+        $data = array("movie"=>$movie,"reviews"=>$reviews);
         return $data;
+
+        // print_r($data);
+        // return $data;
     }
     
     public function create($movie)
